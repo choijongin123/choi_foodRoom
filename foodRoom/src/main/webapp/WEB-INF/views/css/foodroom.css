@@ -51,7 +51,7 @@ vertical-align:		 		center;		/* 행 내부 개체 정렬방식 */
 }
 
 table.topTable td {						/* 테이블 행 옵션 */
-width:	33.3%;		 
+width:	33%;		 
 vertical-align:		 		center;		/* 행 내부 개체 정렬방식 */
 
 }
@@ -79,6 +79,7 @@ margin:		0 10% 0 0;
 
 .userName {
 color:	black;
+
 }
 
 

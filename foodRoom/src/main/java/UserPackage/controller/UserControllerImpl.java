@@ -13,6 +13,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -34,6 +35,8 @@ public class UserControllerImpl implements UserController {
 	private UserDAO userDAO;
 	@Autowired
 	private UserVO userVO;
+	@Autowired
+	BCryptPasswordEncoder pwdEncoder;
 	
 	//-----------------------------------------------------------------------------------------------------------
 	// 메인 페이지 불러오기 layout
@@ -68,6 +71,10 @@ public class UserControllerImpl implements UserController {
 		System.out.println("controllerVO ==>" + userVO);
 		ModelAndView mav = new ModelAndView();
 			
+		String inputPass = userVO.getFr_pwd();
+		String pwd = pwdEncoder.encode(inputPass);
+		userVO.setFr_pwd(pwd);
+		
 		int result1 = userDAO.addUser(userVO); 	// 회원 가입
 		mav = new ModelAndView("redirect:/index.do");
 			
@@ -100,34 +107,59 @@ public class UserControllerImpl implements UserController {
 		ModelAndView mav = new ModelAndView();
 		
 		userVO = userDAO.login(user);   
-	    
+		boolean pwdMatch = pwdEncoder.matches(user.getFr_pwd(), userVO.getFr_pwd());
 		System.out.println("controller 로그인 ==> " + userVO); // userVO에 입력한 로그인 정보가 있는지 확인
 		
-		
-		if(userVO == null) { // 로그인 정보가 없을 경우
-			// 다시 로그인 페이지로
-			rAttr.addAttribute("result", "loginFailed");
-			mav = new ModelAndView("redirect:/loginForm.do");
+		if(userVO.getFr_class().equals("11")) { // 관리자 로그인
+			if(user.getFr_id().equals(userVO.getFr_id()) && user.getFr_pwd().equals(userVO.getFr_pwd())) {
+				HttpSession session = request.getSession();
+				
+				session.setAttribute("fr_id", userVO.getFr_id());
+				session.setAttribute("fr_pwd", userVO.getFr_pwd());
+				session.setAttribute("fr_name", userVO.getFr_name());
+				session.setAttribute("fr_p_number", userVO.getFr_p_number());
+				session.setAttribute("fr_email", userVO.getFr_email());
+				session.setAttribute("fr_class", userVO.getFr_class());
+				session.setAttribute("isLogOn", 	true);
+				session.setMaxInactiveInterval(60*120);
 			
-		} else { // 로그인 정보가 있는 경우
-			// 입력한 id, pwd 가 등록된 id, pwd와 같을 경우
-			if(user.getFr_id().equals(userVO.getFr_id()) && user.getFr_pwd().equals(userVO.getFr_pwd())) { 			
+				mav = new ModelAndView("redirect:/index.do");		
+			} else {
+				rAttr.addAttribute("result", "loginFailed");
+				mav = new ModelAndView("redirect:/loginForm.do");
+			}
+		} else { // 회원, 오너 로그인 
+			if(userVO == null) { // 로그인 정보가 없을 경우
+				// 다시 로그인 페이지로
+				rAttr.addAttribute("result", "loginFailed");
+				mav = new ModelAndView("redirect:/loginForm.do");
 				
-					// 세션 생성
-					HttpSession session = request.getSession();
+			} else { // 로그인 정보가 있는 경우
+				// 입력한 id와 등록된 id가같을 경우
+
+				if(user.getFr_id().equals(userVO.getFr_id()) && pwdMatch == true) { 			
 					
-					session.setAttribute("fr_id", userVO.getFr_id());
-					session.setAttribute("fr_pwd", userVO.getFr_pwd());
-					session.setAttribute("fr_name", userVO.getFr_name());
-					session.setAttribute("fr_p_number", userVO.getFr_p_number());
-					session.setAttribute("fr_email", userVO.getFr_email());
-					session.setAttribute("fr_class", userVO.getFr_class());
-					session.setAttribute("isLogOn", 	true);
-					session.setMaxInactiveInterval(60*120);
-				
-					mav = new ModelAndView("redirect:/index.do");							
-			}	
+						// 세션 생성
+						HttpSession session = request.getSession();
+						
+						session.setAttribute("fr_id", userVO.getFr_id());
+						session.setAttribute("fr_pwd", userVO.getFr_pwd());
+						session.setAttribute("fr_name", userVO.getFr_name());
+						session.setAttribute("fr_p_number", userVO.getFr_p_number());
+						session.setAttribute("fr_email", userVO.getFr_email());
+						session.setAttribute("fr_class", userVO.getFr_class());
+						session.setAttribute("isLogOn", 	true);
+						session.setMaxInactiveInterval(60*120);
+					
+						mav = new ModelAndView("redirect:/index.do");							
+				} else {
+					rAttr.addAttribute("result", "loginFailed");
+					mav = new ModelAndView("redirect:/loginForm.do");
+				}
+			}
 		}
+		
+		
 		return mav;
 	}
 	

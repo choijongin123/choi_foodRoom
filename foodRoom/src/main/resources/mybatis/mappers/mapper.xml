@@ -27,7 +27,6 @@
 		<select id="login" parameterType="vo.UserVO" resultType="vo.UserVO">
 			SELECT * FROM	fr_user
 			WHERE			fr_id  = #{fr_id}
-			AND				fr_pwd = #{fr_pwd}
 		</select>
 		
 		<!-- 아이디 찾기  -->

@@ -141,7 +141,7 @@ function pwTest() {
 				</tr>
 				<tr>
 					<td>이메일</td>
-					<td><input type="text" name="fr_email" id="fr_email" class="myPageUpdateInfo" value="${fr_email}" /></td>
+					<td><input type="text" name="fr_email" id="fr_email" class="myPageUpdateInfo" value="${fr_email}" readonly/></td>
 				</tr>
 				<tr>	
 					<td colspan=2><button type="button" id="myPageUpdateBtn">수정완료</button></td>

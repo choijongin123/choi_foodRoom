@@ -61,6 +61,7 @@ var signUpBtnCnt = 0;
 	$(document).ready(function() {	
 		$('#mail-Check-Btn').click(function() {
 			var eamil = $('#userEmail1').val() + $('#userEmail2').val(); // 이메일 주소값 얻어오기!
+			document.getElementById('fr_email').value = $('#userEmail1').val() + $('#userEmail2').val();
 			alert('완성된 이메일 : ' + eamil); // 이메일 오는지 확인
 			var checkInput = $('.mail-check-input') // 인증번호 입력하는곳 
 			
@@ -72,6 +73,7 @@ var signUpBtnCnt = 0;
 					checkInput.attr('disabled',false);
 					code = data;
 					alert('인증번호가 전송되었습니다.')
+					
 				}			
 			}); // end ajax
 		}); // end send eamil
@@ -222,6 +224,9 @@ var signUpBtnCnt = 0;
 						</select>
 						<button type="button" class="signUpEmailInfoBtn" id="mail-Check-Btn">인증</button>
 					</td>
+				</tr>
+				<tr>
+					<td><input type="hidden" id="fr_email" name="fr_email"/></td>
 				</tr>
 				<tr>
 					<td><input class="signUpInfo mail-check-input" placeholder="인증번호 6자리를 입력해주세요!" disabled="disabled" maxlength="6"></td>

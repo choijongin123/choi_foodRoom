@@ -32,7 +32,7 @@
 				<c:choose>
 					<c:when test="${isLogOn == true && fr_id != null}"> 
 					<td class="dropdown">		
-						<span class="userName topMenuBtn">${fr_name}님	&#9660;</span>
+						<span class="userName">${fr_name}님&#9660;</span>
 						<div class="infoView">
 							<c:if test="${fr_class == 13}"> <!-- 일반회원 -->
 								<a href="${contextPath}/myPage.do"><input type="button" value="내정보" class="infoViewBtn"/></a>
